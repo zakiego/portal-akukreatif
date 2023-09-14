@@ -1,58 +1,28 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/aspect-ratio'),
-    ],
-  }
-  ```
-*/
-const products = [
-  {
-    id: 1,
-    name: "Batuah Craft",
-    href: "#",
-    price: "$256",
-    description:
-      "Get the full lineup of our Basic Tees. Have a fresh shirt all week, and an extra for laundry day.",
-    options: "8 colors",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-01.jpg",
-    imageAlt:
-      "Eight shirts arranged on table in black, olive, grey, blue, white, red, mustard, and green.",
-  },
-  {
-    id: 2,
-    name: "Madinah Sasirangan",
-    href: "#",
-    price: "$32",
-    description:
-      "Look like a visionary CEO and wear the same black t-shirt every day.",
-    options: "Black",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-02.jpg",
-    imageAlt: "Front of plain black t-shirt.",
-  },
-  {
-    id: 3,
-    name: "Inflotu Ecoprint",
-    href: "#",
-    price: "$32",
-    description:
-      "Look like a visionary CEO and wear the same black t-shirt every day.",
-    options: "Black",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-02.jpg",
-    imageAlt: "Front of plain black t-shirt.",
-  },
-];
+import fetchStrapi from "@/lib/strapi";
 
-export default function Products() {
+const DUMMY = {
+  id: 3,
+  name: "Inflotu Ecoprint",
+  href: "#",
+  price: "$32",
+  description:
+    "Look like a visionary CEO and wear the same black t-shirt every day.",
+  options: "Black",
+  imageSrc:
+    "https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-02.jpg",
+  imageAlt: "Front of plain black t-shirt.",
+};
+
+export default async function Products() {
+  const products = await fetchStrapi<any[]>({
+    endpoint: "businesses",
+    // query: {
+    //   populate: "name",
+    // },
+    wrappedByKey: "data",
+    cache: "no-store",
+  });
+
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -66,25 +36,25 @@ export default function Products() {
             >
               <div className="aspect-h-4 aspect-w-3 bg-gray-200 sm:aspect-none group-hover:opacity-75 sm:h-96">
                 <img
-                  src={product.imageSrc}
-                  alt={product.imageAlt}
+                  src={DUMMY.imageSrc}
+                  alt={DUMMY.imageAlt}
                   className="h-full w-full object-cover object-center sm:h-full sm:w-full"
                 />
               </div>
               <div className="flex flex-1 flex-col space-y-2 p-4">
                 <h3 className="text-sm font-medium text-gray-900">
-                  <a href={product.href}>
+                  <a href={DUMMY.href}>
                     <span aria-hidden="true" className="absolute inset-0" />
-                    {product.name}
+                    {product.attributes.Name}
                   </a>
                 </h3>
-                <p className="text-sm text-gray-500">{product.description}</p>
+                <p className="text-sm text-gray-500">{DUMMY.description}</p>
                 <div className="flex flex-1 flex-col justify-end">
                   <p className="text-sm italic text-gray-500">
-                    {product.options}
+                    {DUMMY.options}
                   </p>
                   <p className="text-base font-medium text-gray-900">
-                    {product.price}
+                    {DUMMY.price}
                   </p>
                 </div>
               </div>
