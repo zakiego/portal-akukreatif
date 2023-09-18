@@ -11,7 +11,7 @@ const business = {
       endpoint: "businesses",
       wrappedByKey: "data",
       // cache: "no-store",
-      populate: ["regency", "sector", "owner", "images"],
+      populate: ["regency", "sector", "owner", "images", "social"],
       debugBeforeParse: true,
       // debugAfterParse: true,
       // pagination: {
@@ -64,6 +64,17 @@ const business = {
                   )
                   .nullable(),
               }),
+              social: z
+                .object({
+                  whatsapp: z.string().nullable(),
+                  facebook: z.string().nullable(),
+                  twitter: z.string().nullable(),
+                  instagram: z.string().nullable(),
+                  linkedin: z.string().nullable(),
+                  telegram: z.string().nullable(),
+                  web: z.string().nullable(),
+                })
+                .nullable(),
             }),
           }),
         )
