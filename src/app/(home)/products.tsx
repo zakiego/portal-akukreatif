@@ -1,4 +1,6 @@
-import fetchStrapi from "@/lib/strapi";
+import { fetchStrapi } from "@/lib/strapi";
+import Link from "next/link";
+import { z } from "zod";
 
 const DUMMY = {
   id: 3,
@@ -14,13 +16,20 @@ const DUMMY = {
 };
 
 export default async function Products() {
-  const products = await fetchStrapi<any[]>({
+  const products = await fetchStrapi({
     endpoint: "businesses",
-    // query: {
-    //   populate: "name",
-    // },
     wrappedByKey: "data",
     cache: "no-store",
+    schema: z.array(
+      z.object({
+        id: z.number(),
+        attributes: z.object({
+          name: z.string(),
+          description: z.string().optional(),
+          uuid: z.string(),
+        }),
+      }),
+    ),
   });
 
   return (
@@ -43,10 +52,10 @@ export default async function Products() {
               </div>
               <div className="flex flex-1 flex-col space-y-2 p-4">
                 <h3 className="text-sm font-medium text-gray-900">
-                  <a href={DUMMY.href}>
+                  <Link href={`/profil/${product.attributes.uuid}`}>
                     <span aria-hidden="true" className="absolute inset-0" />
-                    {product.attributes.Name}
-                  </a>
+                    {product.attributes.name}
+                  </Link>
                 </h3>
                 <p className="text-sm text-gray-500">{DUMMY.description}</p>
                 <div className="flex flex-1 flex-col justify-end">

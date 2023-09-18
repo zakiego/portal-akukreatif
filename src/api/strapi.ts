@@ -10,8 +10,10 @@ const business = {
     return await fetchStrapi({
       endpoint: "businesses",
       wrappedByKey: "data",
-      cache: "no-store",
-      debugAfterParse: true,
+      // cache: "no-store",
+      populate: ["regency", "sector", "owner", "images"],
+      debugBeforeParse: true,
+      // debugAfterParse: true,
       // pagination: {
       //   page: 1,
       //   pageSize: 100,
@@ -19,15 +21,54 @@ const business = {
       query: {
         "filters[uuid][$eq]": id,
       },
-      schema: z.array(
-        z.object({
-          id: z.number(),
-          attributes: z.object({
-            name: z.string(),
-            uuid: z.string(),
+      schema: z
+        .array(
+          z.object({
+            id: z.number(),
+            attributes: z.object({
+              name: z.string(),
+              uuid: z.string(),
+              description: z.string().optional(),
+              address: z.string().optional(),
+              regency: z.object({
+                data: z
+                  .object({
+                    id: z.number(),
+                    attributes: z.object({
+                      name: z.string(),
+                    }),
+                  })
+                  .nullable(),
+              }),
+              sector: z.object({
+                data: z
+                  .object({
+                    id: z.number(),
+                    attributes: z.object({
+                      name: z.string(),
+                    }),
+                  })
+                  .nullable(),
+              }),
+              owner: z.any(),
+              images: z.object({
+                data: z
+                  .array(
+                    z.object({
+                      id: z.number(),
+                      attributes: z.object({
+                        name: z.string(),
+                        url: z.string(),
+                      }),
+                    }),
+                  )
+                  .nullable(),
+              }),
+            }),
           }),
-        }),
-      ),
+        )
+        .length(1)
+        .transform((data) => data[0]),
     });
   },
 };
@@ -36,12 +77,10 @@ export const apiStrapi = {
   business: business,
 };
 
-// export type ApiStrapi = Awaited<
-//   ReturnType<(typeof apiStrapi)["business"]["getBusinessByUUID"]>
-// >;
-
+// Define a utility type that recursively extracts return types and adds Awaited
 type DeepReturnType<T> = T extends (...args: any[]) => infer R
-  ? R
+  ? Awaited<R>
   : { [K in keyof T]: DeepReturnType<T[K]> };
 
-export type ApiStrapi = DeepReturnType<typeof apiStrapi>;
+// Infer the ApiStrapi type based on apiStrapi object
+export type ApiStrapiTypes = DeepReturnType<typeof apiStrapi>;

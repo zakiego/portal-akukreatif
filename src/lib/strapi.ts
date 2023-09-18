@@ -1,11 +1,3 @@
-interface Props {
-  endpoint: string;
-  query?: Record<string, string>;
-  wrappedByKey?: string;
-  wrappedByList?: boolean;
-  cache?: RequestCache;
-}
-
 // https://notes.dt.in.th/NextRuntimeEnv
 const strapiUrl = global.process ? global.process.env.STRAPI_URL : "";
 const strapiToken = global.process ? global.process.env.STRAPI_TOKEN : "";
@@ -18,13 +10,50 @@ const strapiToken = global.process ? global.process.env.STRAPI_TOKEN : "";
  * @param wrappedByList - If the response is a list, unwrap it
  * @returns
  */
-export default async function fetchStrapi<T>({
+
+export type Schema<TData> = {
+  parse: (data: unknown) => TData;
+};
+
+type Pagination =
+  | {
+      page: number;
+      pageSize: number;
+      withCount?: boolean;
+    }
+  | {
+      limit: number;
+      start: number;
+      withCount?: boolean;
+    };
+
+type Props<TData> = {
+  endpoint: string;
+  query?: Record<string, string>;
+  wrappedByKey?: string;
+  wrappedByList?: boolean;
+  cache?: RequestCache;
+  schema?: Schema<TData>;
+  debugBeforeParse?: boolean;
+  debugAfterParse?: boolean;
+  pagination?: Pagination;
+  populate?: string[];
+};
+
+export type ZodFetcher = <TData>(props: Props<TData>) => Promise<TData>;
+
+export const fetchStrapi: ZodFetcher = async ({
   endpoint,
   query,
   wrappedByKey,
   wrappedByList,
   cache,
-}: Props): Promise<T> {
+  debugBeforeParse,
+  debugAfterParse,
+  schema,
+  pagination,
+  populate,
+}) => {
   if (endpoint.startsWith("/")) {
     endpoint = endpoint.slice(1);
   }
@@ -37,6 +66,30 @@ export default async function fetchStrapi<T>({
       url.searchParams.append(key, value);
     });
   }
+
+  if (pagination) {
+    if ("page" in pagination) {
+      url.searchParams.append("pagination[page]", pagination.page.toString());
+      url.searchParams.append(
+        "pagination[pageSize]",
+        pagination.pageSize.toString(),
+      );
+    } else {
+      url.searchParams.append("pagination[limit]", pagination.limit.toString());
+      url.searchParams.append("pagination[start]", pagination.start.toString());
+    }
+
+    if (pagination.withCount) {
+      url.searchParams.append("pagination[withCount]", "true");
+    }
+  }
+
+  if (populate) {
+    populate.forEach((p) => {
+      url.searchParams.append("populate", p);
+    });
+  }
+
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${strapiToken}`);
 
@@ -45,8 +98,6 @@ export default async function fetchStrapi<T>({
     cache,
   });
   let data = await res.json();
-
-  console.log(data);
 
   if (wrappedByKey) {
     const keys = wrappedByKey.split(".");
@@ -59,5 +110,17 @@ export default async function fetchStrapi<T>({
     data = data[0];
   }
 
-  return data as T;
-}
+  if (debugBeforeParse) {
+    console.dir(data, { depth: null });
+  }
+
+  if (schema) {
+    data = schema.parse(data);
+  }
+
+  if (debugAfterParse) {
+    console.dir(data, { depth: null });
+  }
+
+  return data;
+};
