@@ -6,7 +6,7 @@ import { Disclosure, RadioGroup, Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { HeartIcon, MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { ApiStrapiTypes } from "@/api/strapi";
-import { createImageURL } from "@/lib/utils";
+import { getImageUrl } from "@/lib/utils";
 import Link from "next/link";
 import Tag from "@/components/ui/tag";
 
@@ -38,7 +38,7 @@ export default function ProductClient({ data }: Props) {
                         <span className="sr-only">{image.attributes.name}</span>
                         <span className="absolute inset-0 overflow-hidden rounded-md">
                           <img
-                            src={createImageURL(image.attributes.url)}
+                            src={getImageUrl(image.attributes.url)}
                             alt=""
                             className="h-full w-full object-cover object-center"
                           />
@@ -61,7 +61,7 @@ export default function ProductClient({ data }: Props) {
               {data.attributes.images.data?.map((image) => (
                 <Tab.Panel key={image.id}>
                   <img
-                    src={createImageURL(image.attributes.url)}
+                    src={getImageUrl(image.attributes.url)}
                     alt={image.attributes.name}
                     className="h-auto w-full object-cover object-center sm:rounded-lg"
                   />

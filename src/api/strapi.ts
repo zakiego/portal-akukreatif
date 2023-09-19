@@ -12,12 +12,6 @@ const business = {
       wrappedByKey: "data",
       // cache: "no-store",
       populate: ["regency", "sector", "owner", "images", "social"],
-      debugBeforeParse: true,
-      // debugAfterParse: true,
-      // pagination: {
-      //   page: 1,
-      //   pageSize: 100,
-      // },
       query: {
         "filters[uuid][$eq]": id,
       },
@@ -80,6 +74,62 @@ const business = {
         )
         .length(1)
         .transform((data) => data[0]),
+    });
+  },
+  homepage: async () => {
+    return await fetchStrapi({
+      endpoint: "businesses",
+      wrappedByKey: "data",
+      pagination: {
+        start: 0,
+        limit: 6,
+      },
+      // cache: "no-store",
+      populate: ["regency", "sector", "images"],
+      schema: z.array(
+        z.object({
+          id: z.number(),
+          attributes: z.object({
+            name: z.string(),
+            description: z.string().optional(),
+            uuid: z.string(),
+            sector: z.object({
+              data: z
+                .object({
+                  id: z.number(),
+                  attributes: z.object({
+                    name: z.string(),
+                  }),
+                })
+                .nullable(),
+            }),
+            owner: z.any(),
+            regency: z.object({
+              data: z
+                .object({
+                  id: z.number(),
+                  attributes: z.object({
+                    name: z.string(),
+                  }),
+                })
+                .nullable(),
+            }),
+            images: z.object({
+              data: z
+                .array(
+                  z.object({
+                    id: z.number(),
+                    attributes: z.object({
+                      name: z.string(),
+                      url: z.string(),
+                    }),
+                  }),
+                )
+                .nullable(),
+            }),
+          }),
+        }),
+      ),
     });
   },
 };

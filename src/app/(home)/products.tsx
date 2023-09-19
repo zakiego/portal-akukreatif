@@ -1,36 +1,14 @@
+/* eslint-disable @next/next/no-img-element */
+import { apiStrapi } from "@/api/strapi";
+import { Badge } from "@/components/ui/badge";
+import Tag from "@/components/ui/tag";
 import { fetchStrapi } from "@/lib/strapi";
+import { getImageUrl } from "@/lib/utils";
 import Link from "next/link";
 import { z } from "zod";
 
-const DUMMY = {
-  id: 3,
-  name: "Inflotu Ecoprint",
-  href: "#",
-  price: "$32",
-  description:
-    "Look like a visionary CEO and wear the same black t-shirt every day.",
-  options: "Black",
-  imageSrc:
-    "https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-02.jpg",
-  imageAlt: "Front of plain black t-shirt.",
-};
-
 export default async function Products() {
-  const products = await fetchStrapi({
-    endpoint: "businesses",
-    wrappedByKey: "data",
-    cache: "no-store",
-    schema: z.array(
-      z.object({
-        id: z.number(),
-        attributes: z.object({
-          name: z.string(),
-          description: z.string().optional(),
-          uuid: z.string(),
-        }),
-      }),
-    ),
-  });
+  const products = await apiStrapi.business.homepage();
 
   return (
     <div className="bg-white">
@@ -44,11 +22,15 @@ export default async function Products() {
               className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white"
             >
               <div className="aspect-h-4 aspect-w-3 bg-gray-200 sm:aspect-none group-hover:opacity-75 sm:h-96">
-                <img
-                  src={DUMMY.imageSrc}
-                  alt={DUMMY.imageAlt}
-                  className="h-full w-full object-cover object-center sm:h-full sm:w-full"
-                />
+                {product.attributes.images.data && (
+                  <img
+                    src={getImageUrl(
+                      product.attributes.images.data[0].attributes.url,
+                    )}
+                    alt={product.attributes.name}
+                    className="h-full w-full object-cover object-center sm:h-full sm:w-full"
+                  />
+                )}
               </div>
               <div className="flex flex-1 flex-col space-y-2 p-4">
                 <h3 className="text-sm font-medium text-gray-900">
@@ -57,14 +39,20 @@ export default async function Products() {
                     {product.attributes.name}
                   </Link>
                 </h3>
-                <p className="text-sm text-gray-500">{DUMMY.description}</p>
-                <div className="flex flex-1 flex-col justify-end">
-                  <p className="text-sm italic text-gray-500">
-                    {DUMMY.options}
-                  </p>
-                  <p className="text-base font-medium text-gray-900">
-                    {DUMMY.price}
-                  </p>
+                <p className="text-sm text-gray-500 line-clamp-3">
+                  {product.attributes.description}
+                </p>
+                <div className="flex flex-row justify-start space-x-4 pt-4">
+                  {product.attributes.sector.data && (
+                    <Badge className="capitalize" variant="secondary">
+                      {product.attributes.sector.data.attributes.name}
+                    </Badge>
+                  )}
+                  {product.attributes.regency.data && (
+                    <Badge className="capitalize" variant="secondary">
+                      {product.attributes.regency.data.attributes.name}
+                    </Badge>
+                  )}
                 </div>
               </div>
             </div>
