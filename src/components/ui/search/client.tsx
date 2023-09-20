@@ -21,6 +21,7 @@ import { useState } from "react";
 import { ApiStrapiTypes } from "@/api/strapi";
 import { useForm, useController, type Control } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import queryString from "query-string";
 
 interface Props {
   sectors: ApiStrapiTypes["sector"]["getAll"];
@@ -54,16 +55,19 @@ export default function SearchClient({ sectors, regencies }: Props) {
   ];
 
   const onSubmit = handleSubmit((data) => {
-    const url = new URL(window.location.href);
-    data.name && url.searchParams.set("name", data.name);
-    data.sector &&
-      data.sector != "0" &&
-      url.searchParams.set("sector", data.sector);
-    data.regency &&
-      data.regency != "0" &&
-      url.searchParams.set("regency", data.regency);
+    const query = queryString.stringify(
+      {
+        name: data.name,
+        sector: data.sector === "0" ? null : data.sector,
+        regency: data.regency === "0" ? null : data.regency,
+      },
+      {
+        skipNull: true,
+        skipEmptyString: true,
+      },
+    );
 
-    router.push(`/galeri?${url.searchParams.toString()}`);
+    router.push(`/galeri?${query}`);
   });
 
   return (
