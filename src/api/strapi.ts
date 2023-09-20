@@ -140,7 +140,7 @@ const business = {
     return await fetchStrapi({
       endpoint: "businesses",
       wrappedByKey: "data",
-      cache: "no-store",
+      // cache: "no-store",
       populate: ["regency", "sector", "owner", "images"],
       query: {
         ...(name && { "filters[name][$containsi]": name }),
