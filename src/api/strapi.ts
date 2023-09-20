@@ -147,7 +147,6 @@ const business = {
         ...(regency && { "filters[regency][id][$eq]": regency }),
         ...(sector && { "filters[sector][id][$eq]": sector }),
       },
-      debugBeforeParse: true,
       schema: z.array(
         z.object({
           id: z.number(),
