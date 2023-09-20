@@ -27,7 +27,7 @@ interface Props {
   regencies: ApiStrapiTypes["regency"]["getAll"];
 }
 
-export default function Search({ sectors, regencies }: Props) {
+export default function SearchClient({ sectors, regencies }: Props) {
   const router = useRouter();
   const { handleSubmit, register, control, formState } = useForm();
 
@@ -55,7 +55,7 @@ export default function Search({ sectors, regencies }: Props) {
 
   const onSubmit = handleSubmit((data) => {
     const url = new URL(window.location.href);
-    url.searchParams.set("name", data.name);
+    data.name && url.searchParams.set("name", data.name);
     data.sector &&
       data.sector != "0" &&
       url.searchParams.set("sector", data.sector);
@@ -76,9 +76,7 @@ export default function Search({ sectors, regencies }: Props) {
           className="w-[300px] md:w-96"
           placeholder="Cari berdasarkan nama"
           autoComplete="off"
-          {...register("name", {
-            required: true,
-          })}
+          {...register("name")}
         />
         <Combobox
           id="sector"
@@ -106,7 +104,7 @@ export default function Search({ sectors, regencies }: Props) {
         <Button
           type="submit"
           className=" w-[180px] md:w-72"
-          disabled={!formState.isValid}
+          // disabled={!formState.isValid}
           variant="default"
         >
           Cari

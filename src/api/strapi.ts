@@ -128,6 +128,72 @@ const business = {
       ),
     });
   },
+  search: async ({
+    name,
+    regency,
+    sector,
+  }: {
+    name?: string;
+    regency?: string;
+    sector?: string;
+  }) => {
+    return await fetchStrapi({
+      endpoint: "businesses",
+      wrappedByKey: "data",
+      cache: "no-store",
+      populate: ["regency", "sector", "owner", "images"],
+      query: {
+        ...(name && { "filters[name][$containsi]": name }),
+        ...(regency && { "filters[regency][id][$eq]": regency }),
+        ...(sector && { "filters[sector][id][$eq]": sector }),
+      },
+      debugBeforeParse: true,
+      schema: z.array(
+        z.object({
+          id: z.number(),
+          attributes: z.object({
+            name: z.string(),
+            description: z.string().optional(),
+            uuid: z.string(),
+            sector: z.object({
+              data: z
+                .object({
+                  id: z.number(),
+                  attributes: z.object({
+                    name: z.string(),
+                  }),
+                })
+                .nullable(),
+            }),
+            owner: z.any(),
+            regency: z.object({
+              data: z
+                .object({
+                  id: z.number(),
+                  attributes: z.object({
+                    name: z.string(),
+                  }),
+                })
+                .nullable(),
+            }),
+            images: z.object({
+              data: z
+                .array(
+                  z.object({
+                    id: z.number(),
+                    attributes: z.object({
+                      name: z.string(),
+                      url: z.string(),
+                    }),
+                  }),
+                )
+                .nullable(),
+            }),
+          }),
+        }),
+      ),
+    });
+  },
 };
 
 const sector = {

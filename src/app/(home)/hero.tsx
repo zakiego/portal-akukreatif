@@ -1,15 +1,14 @@
 import Logo from "~/public/logo.png";
 import Image from "next/image";
-import Search from "@/app/(home)/search";
 import { apiStrapi } from "@/api/strapi";
+import TextGradient from "@/components/ui/textGradient";
+import Search from "@/components/ui/search";
+import Balancer from "react-wrap-balancer";
 
 export default async function Hero() {
-  const sectors = await apiStrapi.sector.getAll();
-  const regencies = await apiStrapi.regency.getAll();
-
   return (
     <div className="bg-white">
-      <div className="relative isolate px-6 pt-14 lg:px-8">
+      <div className="relative isolate px-6 pt-14 lg:px-8 -mt-32">
         <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
           aria-hidden="true"
@@ -29,7 +28,10 @@ export default async function Hero() {
             </div>
             <div className="text-center">
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-                Temukan talenta-talenta kreatif di Kalimantan Selatan
+                <Balancer>
+                  Temukan <TextGradient>talenta-talenta kreatif </TextGradient>
+                  di Kalimantan Selatan
+                </Balancer>
               </h1>
               <p className="mt-6 text-lg leading-8 text-gray-600">
                 Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui
@@ -53,7 +55,7 @@ export default async function Hero() {
             </div>
           </div>
           <div className="mx-auto mt-10 max-w-3xl items-center flex">
-            <Search regencies={regencies} sectors={sectors} />
+            <Search />
           </div>
         </div>
         <div
