@@ -1,10 +1,6 @@
 import { fetchStrapi } from "@/lib/strapi";
 import { ZodType, z } from "zod";
 
-function inferSchemaType<T extends ZodType<any>>(schema: T): T["_output"] {
-  return schema;
-}
-
 const business = {
   getBusinessByUUID: async (id: string) => {
     return await fetchStrapi({
@@ -134,8 +130,44 @@ const business = {
   },
 };
 
+const sector = {
+  getAll: async () => {
+    return await fetchStrapi({
+      endpoint: "sectors",
+      wrappedByKey: "data",
+      schema: z.array(
+        z.object({
+          id: z.number(),
+          attributes: z.object({
+            name: z.string(),
+          }),
+        }),
+      ),
+    });
+  },
+};
+
+const regency = {
+  getAll: async () => {
+    return await fetchStrapi({
+      endpoint: "regencies",
+      wrappedByKey: "data",
+      schema: z.array(
+        z.object({
+          id: z.number(),
+          attributes: z.object({
+            name: z.string(),
+          }),
+        }),
+      ),
+    });
+  },
+};
+
 export const apiStrapi = {
   business: business,
+  sector: sector,
+  regency: regency,
 };
 
 // Define a utility type that recursively extracts return types and adds Awaited

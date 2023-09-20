@@ -1,8 +1,6 @@
-import HeaderHome from "@/app/(home)/header";
+import Hero from "@/app/(home)/hero";
 import Products from "@/app/(home)/products";
-import Footer from "@/components/ui/footer";
 import { Metadata } from "next";
-import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Wadah Pelaku Industri Kreatif Kalimantan Selatan",
@@ -11,7 +9,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <HeaderHome />
+      <Hero />
       <Products />
     </>
   );
