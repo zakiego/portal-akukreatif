@@ -200,6 +200,7 @@ const sector = {
     return await fetchStrapi({
       endpoint: "sectors",
       wrappedByKey: "data",
+      cache: "no-store",
       schema: z.array(
         z.object({
           id: z.number(),
@@ -217,6 +218,7 @@ const regency = {
     return await fetchStrapi({
       endpoint: "regencies",
       wrappedByKey: "data",
+      cache: "no-store",
       schema: z.array(
         z.object({
           id: z.number(),
