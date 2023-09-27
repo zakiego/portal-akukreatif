@@ -97,7 +97,8 @@ export const fetchStrapi: ZodFetcher = async ({
     headers,
     cache,
   });
-  let data = await res.json();
+  const originalResp = await res.json();
+  let data = originalResp;
 
   if (wrappedByKey) {
     const keys = wrappedByKey.split(".");
@@ -115,7 +116,13 @@ export const fetchStrapi: ZodFetcher = async ({
   }
 
   if (schema) {
-    data = schema.parse(data);
+    try {
+      data = schema.parse(data);
+    } catch (error) {
+      console.log("Error at endpoint: ", url.toString());
+      console.log("Response: ", originalResp);
+      throw error;
+    }
   }
 
   if (debugAfterParse) {
