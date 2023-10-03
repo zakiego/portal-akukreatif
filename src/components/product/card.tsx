@@ -11,8 +11,14 @@ interface ProductCardProps {
   sector?: string;
   regency?: string;
 }
+import sanitizeHtml from "sanitize-html";
 
 export default function ProductCard(props: ProductCardProps) {
+  const cleanDescriptionHtml = sanitizeHtml(props.description as string, {
+    allowedTags: [],
+    allowedAttributes: {},
+  });
+
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
       <div className="aspect-h-4 aspect-w-3 bg-gray-200 sm:aspect-none group-hover:opacity-75 sm:h-96">
@@ -31,9 +37,12 @@ export default function ProductCard(props: ProductCardProps) {
             {props.name}
           </Link>
         </h3>
-        <p className="text-sm text-gray-500 line-clamp-3">
-          {props.description}
-        </p>
+        <p
+          className="text-sm text-gray-500 line-clamp-3"
+          dangerouslySetInnerHTML={{
+            __html: cleanDescriptionHtml,
+          }}
+        />
         <div className="flex flex-row justify-start space-x-4 pt-4">
           {props.sector && (
             <Badge className="capitalize" variant="secondary">

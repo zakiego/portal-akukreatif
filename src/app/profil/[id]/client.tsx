@@ -18,7 +18,16 @@ interface Props {
   data: ApiStrapiTypes["business"]["getBusinessByUUID"];
 }
 
+import sanitizeHtml from "sanitize-html";
+
 export default function ProductClient({ data }: Props) {
+  const cleanDescriptionHtml = sanitizeHtml(
+    data.attributes.description as string,
+    {
+      allowedAttributes: {},
+    },
+  );
+
   return (
     <div className="bg-white mt-14">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -167,7 +176,7 @@ export default function ProductClient({ data }: Props) {
               <div
                 className="space-y-6 text-base text-gray-700"
                 dangerouslySetInnerHTML={{
-                  __html: data.attributes.description || "",
+                  __html: cleanDescriptionHtml,
                 }}
               />
             </div>
