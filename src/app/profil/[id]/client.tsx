@@ -141,7 +141,7 @@ export default function ProductClient({ data }: Props) {
                     title: "Sektor",
                     content: (
                       <Link
-                        href={`/galeri?kota=${data.attributes.sector.data?.id}`}
+                        href={`/galeri?sector=${data.attributes.sector.data?.id}`}
                       >
                         <Tag>
                           {data.attributes.sector.data?.attributes.name}
